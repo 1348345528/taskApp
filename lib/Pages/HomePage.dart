@@ -1,4 +1,6 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:task/Util/Storage.dart';
 
 class HomePage extends StatefulWidget {
   @override
@@ -6,10 +8,20 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  List<Widget> _pageList = [];
+
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: Text("home"),
+    return Column(
+      children: [
+        FlatButton(
+          child: Text("点击2"),
+          onPressed: () async {
+            var c = await Storage.getString("Authorization");
+            print(c);
+          },
+        )
+      ],
     );
   }
 }

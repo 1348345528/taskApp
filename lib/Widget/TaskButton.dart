@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:task/EventBus/EventBus.dart';
+
 
 class TaskButton extends StatefulWidget {
   Color color;
@@ -19,15 +18,6 @@ class _TaskButtonState extends State<TaskButton> {
 
   @override
   Widget build(BuildContext context) {
-
-    @override
-    void initState() {
-      super.initState();
-      eventBus.on<LoginButtonEvent>().listen((event) {
-            widget.color = event.color;
-            print("ab");
-      });
-    }
 
     return FlatButton(
       color: widget.color,

@@ -1,13 +1,18 @@
 import 'dart:convert';
 
 import 'package:dio/dio.dart';
+import 'package:fluro/fluro.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:task/Config/Config.dart';
 import 'package:task/EventBus/EventBus.dart';
-import 'package:task/Widget/TaskButton.dart';
+import 'package:task/Routes/application.dart';
+import 'package:task/Util/DioManager.dart';
+import 'package:task/Util/NWMethod.dart';
+import 'package:task/Util/Storage.dart';
 import 'package:task/Widget/TaskText.dart';
 
 class LoginPage extends StatefulWidget {
@@ -40,7 +45,7 @@ class _LoginPageState extends State<LoginPage> {
       });
   }
 
-
+  //登录页面图片
   Widget loginImage(){
     return Center(
       child: Container(
@@ -59,12 +64,13 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 
+  //用户名与密码Widget
   Widget loginUserNamePassword(){
       return Container(
           width: 700.w,
           child:  Column(
             children: [
-              SizedBox(height: 30.h),
+              SizedBox(height: 10.h),
               TaskText(
                 text:"请输入账号",
                 password:false,
@@ -103,27 +109,103 @@ class _LoginPageState extends State<LoginPage> {
       );
   }
 
+  //登录逻辑处理
   _login() async{
     if(loginButton){
+      await EasyLoading.show(status: "登录中");
       var api = "${Config.host}/oauth/erdp-token";
       var password = Uri.encodeComponent("{erdp}"+encodeBase64(_password));
       api = api + "?username=$_userName&password=$password&rememberMe=true";
       print(api);
-      var result = await Dio().post(api,options: Options(
-        headers: {
-          "contentType": "application/json;charset=utf-8",
-          "Authorization":"Basic ZXJkcDpOaVhpbkU3WVRyZDluaDUvUkgxOFBMN3FYMkd6bndvalhmK0preWpNQ0ZUaWVVWFhHZXhtUnplQmdmbHYwdFcrSFpIQjFoZ2dkenpBaFlTK0VUdFFIUjlOSzRnWlBDaGwzUUFmWlZIRm9NVkpzTXdiNWh4c0FlZFJISnN0WGhSSFM3SlIwNXEvZFpMalpWcHFpcXJLWDk0Y2JzbFpDckt5WUx2NHRoY0hxd0k9"
+      try{
+        var result = await Dio().post(api,options: Options(
+            headers: {
+              "contentType": "application/json;charset=utf-8",
+              "Authorization":"Basic ZXJkcDpOaVhpbkU3WVRyZDluaDUvUkgxOFBMN3FYMkd6bndvalhmK0preWpNQ0ZUaWVVWFhHZXhtUnplQmdmbHYwdFcrSFpIQjFoZ2dkenpBaFlTK0VUdFFIUjlOSzRnWlBDaGwzUUFmWlZIRm9NVkpzTXdiNWh4c0FlZFJISnN0WGhSSFM3SlIwNXEvZFpMalpWcHFpcXJLWDk0Y2JzbFpDckt5WUx2NHRoY0hxd0k9"
+            }
+        ));
+        await EasyLoading.dismiss();
+        if("200"==result.data["code"]){
+          print("登录成功");
+            await Storage.setString("Authorization", "Basic "+result.data["res"]["data"]["access_token"]);
+            Application.router.navigateTo(context, "/tab",replace: true);
         }
-      ));
-
-      if("200"==result.data){
-        print("登录成功");
-      }else{
-        print("登录失败");
+      }catch(e){
+        await EasyLoading.dismiss();
+        _loginErrorDialog();
       }
     }
   }
 
+
+  //密码错误弹出框
+  _loginErrorDialog(){
+      showDialog(
+          context: context,
+          barrierDismissible: false,
+          builder: (context){
+            return Dialog(
+              child: Container(
+                height: 330.h,
+                child: Column(
+                  children: [
+                    Container(
+                      height: 82.h,
+                      alignment: Alignment.center,
+                      child: Text(
+                          "登录失败",
+                        style: TextStyle(
+                          fontSize: 40.sp
+                        ),
+                      ),
+                    ),
+                    Divider(height: 0.5.h,),
+                    Container(
+                      height: 165.h,
+                      alignment: Alignment.center,
+                      child: Text(
+                          "密码错误",
+                        style: TextStyle(
+                          fontSize: 30.sp
+                        ),
+                      ),
+                    ),
+                    Divider(height: 0.5.h,),
+                    Container(
+                      height: 82.h,
+                      child: SizedBox(
+                        width: double.infinity,   //设置宽高最大
+                        height: double.infinity,
+                        child: FlatButton(
+                          child: Text("确定"),
+                          onPressed: (){
+                            Navigator.of(context).pop(false);
+                          },
+                        ),
+                      )
+                    )
+                  ],
+                ),
+              ),
+
+              // title: Text("登录失败"),
+              // content: Center(
+              //   child: Text("密码错误")
+              // ),
+              // actions: [
+              //   FlatButton(
+              //     child: Text("确定"),
+              //     onPressed: (){
+              //
+              //     },
+              //   )
+              // ],
+            );
+          });
+  }
+
+
+  //密码加密
   static String encodeBase64(String data){
     var content = utf8.encode(data);
     var digest = base64Encode(content);
@@ -141,11 +223,11 @@ class _LoginPageState extends State<LoginPage> {
               loginImage(),
               loginUserNamePassword(),
               Container(
-                padding: EdgeInsets.only(top: 70.h),
+                padding: EdgeInsets.only(top: 40.h),
                 width: 600.w,
                 child: loginButton?FlatButton(
                   color: Colors.blue,
-                  height: 100.h,
+                  height: 90.h,
                   // highlightColor: Colors.blue[700],
                   colorBrightness: Brightness.dark,
                   splashColor: Colors.grey,
@@ -154,7 +236,7 @@ class _LoginPageState extends State<LoginPage> {
                   onPressed: _login,
                 ):FlatButton(
                   color: Colors.black26,
-                  height: 100.h,
+                  height: 90.h,
                   // highlightColor: Colors.blue[700],
                   colorBrightness: Brightness.dark,
                   splashColor: Colors.grey,

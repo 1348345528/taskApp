@@ -11,7 +11,7 @@ import 'package:flutter/material.dart';
 import './route_handlers.dart';
 
 class Routes {
-  static String root = "/root";
+  static String root = "/tab";
   static String login = "/";
 
   static void configureRoutes(FluroRouter router) {
