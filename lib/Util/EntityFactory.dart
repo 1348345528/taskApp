@@ -1,3 +1,5 @@
+import 'package:task/Entity/User.dart';
+
 class EntityFactory {
   static T generateOBJ<T>(json) {
     if (json == null) {
@@ -7,6 +9,9 @@ class EntityFactory {
 //  else if (T.toString() == "LoginEntity") {
 //   return LoginEntity.fromJson(json) as T;
 //  }
+    else if(T.toString() == "User"){
+      return User.fromJson(json) as T;
+    }
     else {
       return json as T;
     }

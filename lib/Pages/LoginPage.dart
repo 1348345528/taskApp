@@ -23,9 +23,9 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
 
   //用户名
-  String _userName;
+  String _userName ;
   //密码
-  String _password;
+  String _password ;
   //报错文本
   String _errorText;
 
@@ -127,8 +127,10 @@ class _LoginPageState extends State<LoginPage> {
         await EasyLoading.dismiss();
         if("200"==result.data["code"]){
           print("登录成功");
-            await Storage.setString("Authorization", "Basic "+result.data["res"]["data"]["access_token"]);
-            Application.router.navigateTo(context, "/tab",replace: true);
+            await Storage.setString("Authorization", "Bearer "+result.data["res"]["data"]["access_token"]);
+            String userInfo =  json.encode(result.data["res"]["data"]["user_info"]["elUser"]);
+            await Storage.setString("userInfo",userInfo);
+            Application.router.navigateTo(context, "/tab/${userInfo}",replace: true);
         }
       }catch(e){
         await EasyLoading.dismiss();

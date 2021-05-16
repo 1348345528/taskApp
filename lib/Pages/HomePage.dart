@@ -17,7 +17,7 @@ class _HomePageState extends State<HomePage> {
         FlatButton(
           child: Text("点击2"),
           onPressed: () async {
-            var c = await Storage.getString("Authorization");
+            var c = await Storage.getObject("Authorization");
             print(c);
           },
         )

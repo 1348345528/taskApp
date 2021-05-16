@@ -1,7 +1,7 @@
 import 'EntityFactory.dart';
 
 class BaseEntity<T> {
-  int code;
+  String code;
   String message;
   T data;
 
@@ -10,9 +10,9 @@ class BaseEntity<T> {
   factory BaseEntity.fromJson(json) {
     return BaseEntity(
       code: json["code"],
-      message: json["msg"],
+      message: json["message"],
       // data值需要经过工厂转换为我们传进来的类型
-      data: EntityFactory.generateOBJ<T>(json["data"]),
+      data: EntityFactory.generateOBJ<T>(json["res"]["data"]),
     );
   }
 }

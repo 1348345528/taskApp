@@ -1,5 +1,5 @@
 class ErrorEntity {
-  int code;
+  String code;
   String message;
   ErrorEntity({this.code, this.message});
 }

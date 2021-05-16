@@ -1,7 +1,7 @@
 import 'EntityFactory.dart';
 
 class BaseListEntity<T> {
-  int code;
+  String code;
   String message;
   List<T> data;
 

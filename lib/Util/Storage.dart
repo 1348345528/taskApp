@@ -7,9 +7,9 @@ class Storage{
        SharedPreferences sp=await SharedPreferences.getInstance();
        sp.setString(key, value);
   }
-  static Future<String> getString(key) async{
+  static Future<Object> getObject(key) async{
        SharedPreferences sp=await SharedPreferences.getInstance();
-       return sp.getString(key);
+       return sp.get(key);
   }
   static Future<void> remove(key) async{
        SharedPreferences sp=await SharedPreferences.getInstance();

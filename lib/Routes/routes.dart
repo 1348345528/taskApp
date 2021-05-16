@@ -11,8 +11,9 @@ import 'package:flutter/material.dart';
 import './route_handlers.dart';
 
 class Routes {
-  static String root = "/tab";
+  static String root = "/tab/:userInfo";
   static String login = "/";
+  static String myWorkSpace= "/myWorkSpace";
 
   static void configureRoutes(FluroRouter router) {
     router.notFoundHandler = Handler(
@@ -22,5 +23,6 @@ class Routes {
     });
     router.define(root, handler: rootHandler);
     router.define(login, handler: loginHandler);
+    router.define(myWorkSpace, handler: myWorkSpaceHandler);
   }
 }
